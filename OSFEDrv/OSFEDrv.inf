@@ -1,0 +1,77 @@
+;
+; OSFEDrv.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System ; TODO: specify appropriate Class
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318} ; TODO: specify appropriate ClassGuid
+Provider=%ManufacturerName%
+CatalogFile=OSFEDrv.cat
+DriverVer= ; TODO: set DriverVer in stampinf property pages
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir = 12
+OSFEDrv_Device_CoInstaller_CopyFiles = 11
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+OSFEDrv.sys  = 1,,
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%OSFEDrv.DeviceDesc%=OSFEDrv_Device, Root\OSFEDrv ; TODO: edit hw-id
+
+[OSFEDrv_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+OSFEDrv.sys
+
+;-------------- Service installation
+[OSFEDrv_Device.NT.Services]
+AddService = OSFEDrv,%SPSVCINST_ASSOCSERVICE%, OSFEDrv_Service_Inst
+
+; -------------- OSFEDrv driver install sections
+[OSFEDrv_Service_Inst]
+DisplayName    = %OSFEDrv.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\OSFEDrv.sys
+
+;
+;--- OSFEDrv_Device Coinstaller installation ------
+;
+
+[OSFEDrv_Device.NT.CoInstallers]
+AddReg=OSFEDrv_Device_CoInstaller_AddReg
+CopyFiles=OSFEDrv_Device_CoInstaller_CopyFiles
+
+[OSFEDrv_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[OSFEDrv_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[OSFEDrv_Device.NT.Wdf]
+KmdfService =  OSFEDrv, OSFEDrv_wdfsect
+[OSFEDrv_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+DiskName = "OSFEDrv Installation Disk"
+OSFEDrv.DeviceDesc = "OSFEDrv Device"
+OSFEDrv.SVCDESC = "OSFEDrv Service"
