@@ -90,3 +90,7 @@ sc delete OSFEDrv
 ```
 7. Done.
 **You cannot stop the driver since tear-down manager is exlcluded from this project.**
+
+
+# Sample trace after running Kernel driver
+## You may access the [anonymous link](https://mega.nz/folder/h7cASZ4a#WbkVfC4hfEj-7IKDc6QpBw) for reviewing some of our traces
